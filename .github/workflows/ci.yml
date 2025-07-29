@@ -1,0 +1,47 @@
+name: CI Build and SonarQube Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Scan JS App
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js LTS
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Lint or Build (optional)
+      run: |
+        echo "You can run lint/build steps here"
+        # npm run build or npm run lint
+
+    - name: Wait for SonarQube
+      run: |
+        for i in {1..30}; do
+          if curl -s "${{ secrets.SONAR_HOST_URL }}/api/system/health" | grep -q '"status":"GREEN"'; then
+            echo "SonarQube is ready!"
+            break
+          fi
+          echo "Waiting for SonarQube... ($i)"
+          sleep 10
+        done
+
+    - name: SonarQube Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        npx sonar-scanner \
+          -Dsonar.projectKey=musician-app \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
