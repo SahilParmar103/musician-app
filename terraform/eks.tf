@@ -47,11 +47,11 @@ module "eks" {
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
-  vpc_id = var.vpc_id
+  vpc_id = "vpc-0e40c5361404fb269"
   subnet_ids = [
-    "subnet-02e1a0ff02e9ee865",
-    "subnet-0994e0cac02b39748",
-    "subnet-007844908fbf40da8"
+    "subnet-0acb823a59c31e156",
+    "subnet-06e64fbdbfe472925",
+    "subnet-087fd0194978d0fb3"
   ]
 
   eks_managed_node_groups = {
