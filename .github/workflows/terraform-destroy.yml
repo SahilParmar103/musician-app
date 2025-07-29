@@ -3,6 +3,10 @@ name: Terraform Infrastructure Destroy
 on:
   workflow_dispatch:
 
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: musician-app
+
 jobs:
   terraform:
     name: Terraform Destroy
@@ -22,7 +26,26 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Empty ECR Repository Before Destroy
+      run: |
+        echo "🔄 Checking for images in ECR repository: $ECR_REPOSITORY"
+        IMAGE_TAGS=$(aws ecr list-images \
+          --region $AWS_REGION \
+          --repository-name $ECR_REPOSITORY \
+          --query 'imageIds[*]' \
+          --output json)
+
+        if [ "$IMAGE_TAGS" != "[]" ]; then
+          echo "🧹 Deleting all images..."
+          aws ecr batch-delete-image \
+            --region $AWS_REGION \
+            --repository-name $ECR_REPOSITORY \
+            --image-ids "$IMAGE_TAGS"
+        else
+          echo "✅ No images found in repository."
+        fi
 
     - name: Terraform Init
       working-directory: terraform
