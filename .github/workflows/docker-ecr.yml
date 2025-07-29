@@ -38,11 +38,20 @@ jobs:
       run: |
         docker build -t $ECR_REPOSITORY:${{ github.sha }} .
 
-    - name: Tag and Push to ECR
+    - name: Tag and Push to ECR (SHA + latest)
       run: |
-        IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-        docker tag $ECR_REPOSITORY:${{ github.sha }} $IMAGE_URI
-        docker push $IMAGE_URI
+        ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+        IMAGE_NAME=${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}
 
-    - name: Output Image URI
-      run: echo "Image pushed to ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
+        # Tag with both commit SHA and latest
+        docker tag ${{ env.ECR_REPOSITORY }}:${{ github.sha }} $IMAGE_NAME:latest
+
+        # Push both tags
+        docker push $IMAGE_NAME:${{ github.sha }}
+        docker push $IMAGE_NAME:latest
+
+    - name: Output Image URIs
+      run: |
+        echo "✅ Image pushed to ECR:"
+        echo " - ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"
+        echo " - ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest"
