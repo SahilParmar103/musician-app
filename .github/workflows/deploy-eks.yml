@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_URI: 474668397798.dkr.ecr.us-east-1.amazonaws.com/musician-app
-  EKS_CLUSTER_NAME: eks-cluster
+  EKS_CLUSTER_NAME: musician-app-cluster
 
 jobs:
   deploy:
