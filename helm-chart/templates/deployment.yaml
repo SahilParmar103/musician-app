@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musician-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: musician-app
+  template:
+    metadata:
+      labels:
+        app: musician-app
+    spec:
+      containers:
+        - name: musician-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3000  # assuming your Node.js app listens on 3000
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}

@@ -1,0 +1,12 @@
+replicaCount: 2
+
+image:
+  repository: 474668397798.dkr.ecr.us-east-1.amazonaws.com/musician-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+env:
+  - name: NODE_ENV
+    value: production
+  - name: PORT
+    value: "3000"
