@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: musician-app
 spec:
-  type: { { .Values.service.type } }
+  type: "{{ .Values.service.type }}"
   selector:
     app: musician-app
   ports:
     - name: http
-      port: { { .Values.service.port } }
-      targetPort: { { .Values.service.targetPort } }
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
