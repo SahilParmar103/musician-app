@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: 474668397798.dkr.ecr.us-east-1.amazonaws.com/musician-app
-  tag: 20dd0ad7572a059f7a599b8ba3228d15682aa919
+  tag: latest
   pullPolicy: IfNotPresent
 
 env:
